@@ -79,6 +79,10 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 /////////////////////////////////////////////////
+
+// Event handlers
+let currentAccount, timer;
+
 // Functions
 
 const formatMovementDate = function (date) {
@@ -175,14 +179,35 @@ const updateUI = function (acc) {
 };
 
 ///////////////////////////////////////
-// Event handlers
-let currentAccount;
+
+const startLogOutTimer = function () {
+  // set time to 5 min
+  let time = 10;
+  const tick = function () {
+    const min = String(Math.trunc(time / 60)).padStart(2, 0);
+    const sec = time % 60;
+    labelTimer.textContent = `${min}:${sec}`;
+
+    if (time === 0) {
+      clearInterval(timer);
+      labelWelcome.textContent = 'Log in to get started';
+      containerApp.style.opacity = 0;
+    }
+    time--;
+  };
+
+  // call the timer every second
+  tick();
+  timer = setInterval(tick, 1000);
+  return timer;
+};
 
 // Fake always logged in
-currentAccount = account1;
-updateUI(currentAccount);
-containerApp.style.opacity = 100;
+// currentAccount = account1;
+// updateUI(currentAccount);
+// containerApp.style.opacity = 100;
 
+// experimenting API
 const now = new Date();
 const day = `${now.getDate()}`.padStart(2, 0);
 const month = `${now.getMonth() + 1}`.padStart(2, 0);
@@ -190,6 +215,15 @@ const year = now.getFullYear();
 const hour = now.getHours();
 const min = now.getMinutes();
 labelDate.textContent = `${day}/${month}/${year}, ${hour}:${min}`;
+
+const options = {
+  hour: 'numeric',
+  minute: 'numeric',
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+  weekday: 'long',
+};
 
 btnLogin.addEventListener('click', function (e) {
   // Prevent form from submitting
@@ -210,6 +244,10 @@ btnLogin.addEventListener('click', function (e) {
     // Clear input fields
     inputLoginUsername.value = inputLoginPin.value = '';
     inputLoginPin.blur();
+
+    // Timer
+    if (timer) clearInterval(timer);
+    timer = startLogOutTimer();
 
     // Update UI
     updateUI(currentAccount);
@@ -240,6 +278,10 @@ btnTransfer.addEventListener('click', function (e) {
 
     // Update UI
     updateUI(currentAccount);
+
+    // Reset timer
+    clearInterval(timer);
+    timer = startLogOutTimer();
   }
 });
 
@@ -249,15 +291,22 @@ btnLoan.addEventListener('click', function (e) {
   const amount = Math.floor(inputLoanAmount.value);
 
   if (amount > 0 && currentAccount.movements.some(mov => mov >= amount * 0.1)) {
-    // Add movement
-    currentAccount.movements.push(amount);
+    setTimeout(function () {
+      // Add movement
+      currentAccount.movements.push(amount);
 
-    // Add tranfer date
-    currentAccount.movementsDates.push(new Date());
+      // Add tranfer date
+      currentAccount.movementsDates.push(new Date());
 
-    // Update UI
-    updateUI(currentAccount);
+      // Reset timer
+      clearInterval(timer);
+      timer = startLogOutTimer();
+
+      // Update UI
+      updateUI(currentAccount);
+    }, 2500);
   }
+
   inputLoanAmount.value = '';
 });
 
@@ -303,3 +352,19 @@ labelBalance.addEventListener('click', function () {
 // LECTURES
 
 console.log(23 === 23.0);
+
+// set time out
+// const ings = ['olives', 'spinach'];
+// const pizzaTimer = setTimeout(
+//   (ing1, ing2) => console.log(`${ing1} and ${ing2}`),
+//   3000,
+//   ...ings
+// );
+
+// if (ings.includes('spinach')) clearTimeout(pizzaTimer);
+
+// setInterval
+// setInterval( function () {
+//   const now = new Date();
+//   console.log(now);
+// }, 3000);
