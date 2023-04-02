@@ -125,7 +125,12 @@ img {
 }
 
 /* nav and stickly class at the same time */
-.nav.sticky {
+.nav {
+  position: fixed;
+  background-color: rgba(255, 255, 255, 0.95);
+}
+
+.sticky {
   position: fixed;
   background-color: rgba(255, 255, 255, 0.95);
 }
