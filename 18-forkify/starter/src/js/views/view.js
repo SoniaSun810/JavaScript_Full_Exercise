@@ -14,7 +14,7 @@ export default class View {
   }
 
   _clear() {
-    console.log(this._parentElement);
+    // console.log(this._parentElement);
     this._parentElement.innerHTML = '';
   }
 
@@ -27,7 +27,7 @@ export default class View {
   </div>
     `;
     this._clear();
-    console.log(this._parentElement);
+    // console.log(this._parentElement);
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
   }
 
@@ -55,10 +55,6 @@ export default class View {
   </div>`;
     this._clear();
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
-  }
-
-  addHandlerRender(handler) {
-    ['hashchange', 'load'].forEach(ev => window.addEventListener(ev, handler));
   }
 
   _generateMarkup() {

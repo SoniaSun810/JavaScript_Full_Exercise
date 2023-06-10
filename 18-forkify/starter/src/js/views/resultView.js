@@ -1,19 +1,18 @@
 import View from './view.js';
 import icons from 'url:../../img/icons.svg'; // Parcel 2
 
-
 class ResultView extends View {
-    _data = [];
-    _parentElement = document.querySelector('.results');
-    _errorMessage = 'No recipes found for your query! Please try again :)';
+  _data = [];
+  _parentElement = document.querySelector('.results');
+  _errorMessage = 'No recipes found for your query! Please try again :)';
 
-    _generateMarkup() {
-        // console.log("resultView._data", this._data);
-        return this._data.map(this._generateMarkupPreview).join('');
-    }
+  _generateMarkup() {
+    // console.log("resultView._data", this._data);
+    return this._data.map(this._generateMarkupPreview).join('');
+  }
 
-    _generateMarkupPreview(result) {
-        return `
+  _generateMarkupPreview(result) {
+    return `
         <li class="preview">
           <a class="preview__link" href="#${result.id}">
             <figure class="preview__fig">
@@ -26,12 +25,7 @@ class ResultView extends View {
           </a>
         </li>
         `;
-    }
-
-
-
-
-
+  }
 }
 
 export default new ResultView();
