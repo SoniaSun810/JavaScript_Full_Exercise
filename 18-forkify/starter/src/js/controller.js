@@ -2,6 +2,7 @@ import * as model from './model.js';
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultView from './views/resultView.js';
+import bookMarksView from './views/bookMarksView.js';
 import paginationView from './views/paginationView.js';
 
 import 'core-js/stable';
@@ -19,6 +20,7 @@ const controlRecipe = async function () {
     if (!id) return;
     // 0 update result view to mark selected search result
     resultView.update(model.getSearchResultsPage());
+    bookMarksView.update(model.state.bookmarks);
 
     recipeView.renderSpinner();
 
@@ -28,6 +30,9 @@ const controlRecipe = async function () {
 
     // 2 rendering recipe
     recipeView.render(recipe);
+
+    // 3 update bookmarks view
+    bookMarksView.update(model.state.bookmarks);
   } catch (err) {
     console.error(err);
     recipeView.renderError();
@@ -39,7 +44,7 @@ const controlRecipe = async function () {
 const controlSearchResults = async function () {
   try {
     resultView.renderSpinner();
-    
+
     // 1 get search query
     const query = searchView.getQuery();
     if (!query) return;
@@ -73,11 +78,33 @@ const controlServings = function (newServings) {
   recipeView.update(model.state.recipe);
 };
 
+const controlAddBookmark = function () {
+  // 1 add/remove bookmark
+  if (!model.state.recipe.bookmarked) model.addBookMark(model.state.recipe);
+  else model.deleteBookmark(model.state.recipe.id);
+  console.log(model.state.recipe);
+  // 2 update recipe view
+  recipeView.update(model.state.recipe);
+  // 3 render bookmarks
+  bookMarksView.render(model.state.bookmarks);
+};
+
+const constrolBookmarks = function () {
+  bookMarksView.render(model.state.bookmarks);
+};
+
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
+  recipeView.addHandlerBookmark(controlAddBookmark);
+  recipeView.addHandlerUpdateServings(controlServings);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
-  recipeView.addHandlerUpdateServings(controlServings);
+  bookMarksView.addHandlerRender(constrolBookmarks);
 };
 
 init();
+
+const clearBookmarks = function () {
+  localStorage.clear('bookmarks');
+}
+// clearBookmarks();
