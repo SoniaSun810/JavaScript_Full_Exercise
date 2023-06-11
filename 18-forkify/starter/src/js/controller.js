@@ -16,8 +16,9 @@ if (module.hot) {
 const controlRecipe = async function () {
   try {
     const id = window.location.hash.slice(1);
-    console.log(id);
     if (!id) return;
+    // 0 update result view to mark selected search result
+    resultView.update(model.getSearchResultsPage());
 
     recipeView.renderSpinner();
 
@@ -38,13 +39,14 @@ const controlRecipe = async function () {
 const controlSearchResults = async function () {
   try {
     resultView.renderSpinner();
+    
     // 1 get search query
     const query = searchView.getQuery();
     if (!query) return;
     // 2 load search results
     await model.loadSearchResults(query);
     // 3 render results
-    console.log("get model.getSearchResults", model.getSearchResultsPage(3));
+    console.log('get model.getSearchResults', model.getSearchResultsPage(3));
     resultView.render(model.getSearchResultsPage(1));
 
     // 4 render initial pagination buttons
@@ -62,21 +64,20 @@ const controlPagination = function (goToPage) {
   paginationView.render(model.state.search);
 };
 
-
 const controlServings = function (newServings) {
-  // update the recipe servings (in state) 
+  // update the recipe servings (in state)
   model.updateServings(newServings);
 
   // update the recipe view
-  recipeView.render(model.state.recipe);
-}
+  // recipeView.render(model.state.recipe);
+  recipeView.update(model.state.recipe);
+};
 
 const init = function () {
   recipeView.addHandlerRender(controlRecipe);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
   recipeView.addHandlerUpdateServings(controlServings);
-  
 };
 
 init();
